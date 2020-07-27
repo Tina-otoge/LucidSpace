@@ -1481,13 +1481,13 @@ function drawScore(deltaTime)
 end
 
 
-local gaugeEffBack = gfx.CreateSkinImage("gameplay/gauge/effective/gauge_back.png", 0)
-local gaugeEffFillNormalAnim = gfx.LoadSkinAnimation("gameplay/gauge/effective/fill_normal_frames", (1.0 / 48.0))
-local gaugeEffFillPassAnim = gfx.LoadSkinAnimation("gameplay/gauge/effective/fill_pass_frames", (1.0 / 48.0))
-local gaugeExcBack = gfx.CreateSkinImage("gameplay/gauge/excessive/gauge_back.png", 0)
-local gaugeExcFillNormal = gfx.CreateSkinImage("gameplay/gauge/excessive/gauge_fill.png", 0)
-local gaugeExcFillPass = gfx.CreateSkinImage("gameplay/gauge/excessive/gauge_fill.png", 0)
-local gaugePercentBack = gfx.CreateSkinImage("gameplay/gauge/gauge_percent_back.png", 0)
+local gaugeEffBack = gfx.CreateSkinImage("gauges/effective/gauge_back.png", 0)
+local gaugeEffFillNormalAnim = gfx.LoadSkinAnimation("gauges/effective/fill_normal_frames", (1.0 / 48.0))
+local gaugeEffFillPassAnim = gfx.LoadSkinAnimation("gauges/effective/fill_pass_frames", (1.0 / 48.0))
+local gaugeExcBack = gfx.CreateSkinImage("gauges/excessive/gauge_back.png", 0)
+local gaugeExcFillNormal = gfx.CreateSkinImage("gauges/excessive/gauge_fill.png", 0)
+local gaugeExcFillPass = gfx.CreateSkinImage("gauges/excessive/gauge_fill.png", 0)
+local gaugePercentBack = gfx.CreateSkinImage("gauges/gauge_percent_back.png", 0)
 
 function drawGauge(deltaTime)
 	gfx.Save()

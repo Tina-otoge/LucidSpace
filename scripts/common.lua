@@ -1,7 +1,17 @@
+function unpack (t, i)
+	i = i or 1
+	if t[i] ~= nil then
+		return t[i], unpack(t, i + 1)
+	end
+end
+
 Colors = {
-	RGBA = {
-		WHITE = {255, 255, 255, 255},
-	},
+	WHITE  = {255, 255, 255, 255},
+	BLACK  = {  0,   0,   0, 255},
+	PURPLE = {160, 116, 189, 255},
+	YELLOW = {240, 208, 131, 255},
+	BLUE   = { 42,  43,  84, 255},
+	CYAN   = {144, 182, 217, 255},
 }
 
 drawAberratedText = function(text, x, y, offset)
@@ -9,7 +19,7 @@ drawAberratedText = function(text, x, y, offset)
   -- gfx.Text(text, x, (y + offset));
   -- gfx.FillColor(55, 255, 255, 0);  -- removed
   -- gfx.Text(text, (x + offset), y);
-  gfx.FillColor(255, 255, 255, 255)
+  gfx.FillColor(unpack(Colors.WHITE))
   gfx.Text(text, x, y);
 end
 

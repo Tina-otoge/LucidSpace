@@ -13,6 +13,8 @@ local scale;
 local xShift;
 local yShift;
 
+local medal_ratio = 1.278
+local medal_scale = 0.9
 
 resetLayoutInformation = function()
   resx, resy = game.GetResolution();
@@ -24,18 +26,18 @@ resetLayoutInformation = function()
   yShift = (resy - (desh * scale)) / 2;
 end
 
-local noGrade = Image.new('song_select/grades/none.png');
+local noGrade = Image.new('result/grades/none.png');
 local grades = {
-  {['min'] = 9900000, ['image'] = Image.new('song_select/grades/S.png')},
-  {['min'] = 9800000, ['image'] = Image.new('song_select/grades/AAA+.png')},
-  {['min'] = 9700000, ['image'] = Image.new('song_select/grades/AAA.png')},
-  {['min'] = 9500000, ['image'] = Image.new('song_select/grades/AA+.png')},
-  {['min'] = 9300000, ['image'] = Image.new('song_select/grades/AA.png')},
-  {['min'] = 9000000, ['image'] = Image.new('song_select/grades/A+.png')},
-  {['min'] = 8700000, ['image'] = Image.new('song_select/grades/A.png')},
-  {['min'] = 7500000, ['image'] = Image.new('song_select/grades/B.png')},
-  {['min'] = 6500000, ['image'] = Image.new('song_select/grades/C.png')},
-  {['min'] =       0, ['image'] = Image.new('song_select/grades/D.png')}
+  {['min'] = 9900000, ['image'] = Image.new('result/grades/S.png')},
+  {['min'] = 9800000, ['image'] = Image.new('result/grades/AAA+.png')},
+  {['min'] = 9700000, ['image'] = Image.new('result/grades/AAA.png')},
+  {['min'] = 9500000, ['image'] = Image.new('result/grades/AA+.png')},
+  {['min'] = 9300000, ['image'] = Image.new('result/grades/AA.png')},
+  {['min'] = 9000000, ['image'] = Image.new('result/grades/A+.png')},
+  {['min'] = 8700000, ['image'] = Image.new('result/grades/A.png')},
+  {['min'] = 7500000, ['image'] = Image.new('result/grades/B.png')},
+  {['min'] = 6500000, ['image'] = Image.new('result/grades/C.png')},
+  {['min'] =       0, ['image'] = Image.new('result/grades/D.png')}
 };
 
 findGradeImage = function(difficulty)
@@ -58,13 +60,13 @@ findGradeImage = function(difficulty)
   };
 end
 
-local noMedal = Image.new('song_select/medals/none.png');
+local noMedal = Image.new('result/medals/none.png');
 local medals = {
-  Image.new('song_select/medals/nc.png'),
-  Image.new('song_select/medals/c.png'),
-  Image.new('song_select/medals/hc.png'),
-  Image.new('song_select/medals/uc.png'),
-  Image.new('song_select/medals/puc.png')
+  Image.new('result/medals/nc.png'),
+  Image.new('result/medals/c.png'),
+  Image.new('result/medals/hc.png'),
+  Image.new('result/medals/uc.png'),
+  Image.new('result/medals/puc.png')
 }
 
 findMedalImage = function(difficulty)
@@ -435,14 +437,15 @@ SongData.render = function(this, deltaTime)
 
   local offset_medals_x = 3
   local offset_medals_y = -4
-  local scale_medals = 1.4
+  local medal_size = 50
 
   local grade = findGradeImage(diff);
 
   grade.image:draw({
     x = offset_medals_x + ((portrait and 635) or 450.5),
     y = offset_medals_y + ((portrait and 179) or 238),
-    s = scale_medals * ((portrait and 0.5) or 0.65),
+    h = medal_size,
+    w = medal_size * medal_ratio,
     alpha = (grade.flicker and glowState and 0.9) or 1
   });
 
@@ -451,7 +454,9 @@ SongData.render = function(this, deltaTime)
   medal.image:draw({
     x = offset_medals_x + ((portrait and 682) or 450.5),
     y = offset_medals_y + ((portrait and 179) or 302),
-    s = scale_medals * ((portrait and 0.5) or 0.65),
+    h = medal_size,
+    w = medal_size * medal_ratio,
+    s = medal_scale,
     alpha = (grade.flicker and glowState and 0.9) or 1
   });
 
@@ -696,11 +701,13 @@ SongTable.drawSong = function(this, pos, index)
   local grade = findGradeImage(diff);
 
   local offset_medals_x = 1
+  local medal_size = 28
 
   grade.image:draw({
     x = offset_medals_x + x + 42,
     y = y - 70,
-    s = 0.5,
+    h = medal_size,
+    w = medal_size * medal_ratio,
     alpha = (grade.flicker and glowState and 0.9) or 1
   });
 
@@ -709,7 +716,9 @@ SongTable.drawSong = function(this, pos, index)
   medal.image:draw({
     x = offset_medals_x + x + 42,
     y = y - 33,
-    s = 0.5,
+    h = medal_size,
+    w = medal_size * medal_ratio,
+    s = medal_scale,
     alpha = (grade.flicker and glowState and 0.9) or 1
   });
 
@@ -783,7 +792,7 @@ drawSearch = function(deltaTime)
     gfx.BeginPath();
     gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
     -- gfx.FillColor(245, 65, 125, 255);
-    gfx.FillColor(160, 116, 189, 255);
+    gfx.FillColor(unpack(Colors.PURPLE));
 
     if (searchIndex ~= ((songwheel.searchInputActive and 0) or 1)) then
       gfx.BeginPath();

@@ -185,8 +185,7 @@ render = function(deltaTime)
 		gfx.Scale(scale, scale);
 	end
 	gfx.BeginPath()
-	gfx.FillColor(255, 255, 255)
-	gfx.ImageRect(0, 0, desw, desh, background, 1, 0)
+	gfx.FillColor(unpack(Colors.PURPLE))
 	gfx.Restore()
 
 	logo:draw({

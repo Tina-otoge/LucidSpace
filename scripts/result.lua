@@ -74,7 +74,7 @@ Results.drawJacket = function(this, jacket, x, y, w, h)
   gfx.Fill();
 
   gfx.BeginPath();
-  gfx.FillColor(255, 255, 255, 255);
+  gfx.FillColor(unpack(Colors.WHITE));
   gfx.RoundedRect((x1 - 4), (y1 - 4), (w + 8), (h + 8), 10);
   gfx.Fill();
 
@@ -87,7 +87,7 @@ Results.drawTitleArtist = function(this, label, x, y, offset, maxWidth)
   gfx.TextAlign(gfx.TEXT_ALIGN_CENTER);
   gfx.FillColor(245, 65, 125, 0); -- removed
   gfx.DrawLabel(label, (x + offset), (y + offset), maxWidth);
-  gfx.FillColor(255, 255, 255, 255);
+  gfx.FillColor(unpack(Colors.WHITE))
   gfx.DrawLabel(label, x, y, maxWidth);
 end
 
@@ -148,8 +148,8 @@ Results.drawScore = function(this, score, highScore, positive, x1, y1, x2, y2)
 
   if (not portrait) then
     gfx.BeginPath();
-    gfx.FillColor(255, 255, 255, 255);
-    gfx.StrokeColor(245, 65, 125, 255);
+    gfx.FillColor(unpack(Colors.WHITE));
+    gfx.StrokeColor(unpack(Colors.YELLOW));
     gfx.RoundedRect(1154, 248, 200, 26, 12);
     gfx.Fill();
     gfx.Stroke();
@@ -171,7 +171,7 @@ end
 
 Results.drawGraph = function(this, x, y, w, h)
   gfx.BeginPath();
-  gfx.FillColor(0, 0, 0, 255);
+  gfx.FillColor(unpack(Colors.BLACK));
   gfx.Rect(x, y, w, h);
   gfx.Fill();
 
@@ -567,7 +567,7 @@ render = function(deltaTime, showStats)
   gfx.Scale(scale, scale);
 
   if (not grade) then
-    grade = Image.new(string.format('score/%s.png', result.grade));
+    grade = Image.new(string.format('result/grades/%s.png', result.grade));
   end
 
   results:render(showStats);
