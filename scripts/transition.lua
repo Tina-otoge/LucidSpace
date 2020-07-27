@@ -36,13 +36,13 @@ local stripesLightPortrait = gfx.CreateSkinImage("song_transition/stripes_light_
 local stripesDarkPortrait = gfx.CreateSkinImage("song_transition/stripes_dark_p.png", 0)
 local topLeftDetailPortrait = gfx.CreateSkinImage("song_transition/top_left_detail_p.png", 0)
 local bottomRightDetailPortrait = gfx.CreateSkinImage("song_transition/bottom_right_detail_p.png", 0)
-local placeholderPortrait= gfx.CreateSkinImage("song_transition/placeholder_p.png", 0)
+local placeholderPortrait= gfx.CreateSkinImage("title/logo.png", 0)
 
 local stripesLightLandscape = gfx.CreateSkinImage("song_transition/stripes_light_l.png", 0)
 local stripesDarkLandscape = gfx.CreateSkinImage("song_transition/stripes_dark_l.png", 0)
 local topLeftDetailLandscape = gfx.CreateSkinImage("song_transition/top_left_detail_l.png", 0)
 local bottomRightDetailLandscape = gfx.CreateSkinImage("song_transition/bottom_right_detail_l.png", 0)
-local placeholderLandscape = gfx.CreateSkinImage("song_transition/placeholder_l.png", 0)
+local placeholderLandscape = gfx.CreateSkinImage("title/logo.png", 0)
 
 function render_screen()
 

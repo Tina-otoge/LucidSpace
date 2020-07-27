@@ -1,3 +1,18 @@
+Colors = {
+	RGBA = {
+		WHITE = {255, 255, 255, 255},
+	},
+}
+
+drawAberratedText = function(text, x, y, offset)
+  -- gfx.FillColor(245, 65, 125, 0); -- removed
+  -- gfx.Text(text, x, (y + offset));
+  -- gfx.FillColor(55, 255, 255, 0);  -- removed
+  -- gfx.Text(text, (x + offset), y);
+  gfx.FillColor(255, 255, 255, 255)
+  gfx.Text(text, x, y);
+end
+
 gfx.LoadSkinFont('arial.ttf');
 
 Memo = {};

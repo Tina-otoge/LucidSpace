@@ -6,8 +6,10 @@ local label = -1
 local buttonWidth = 0
 local buttonHeight = 0
 
-local backgroundPT = gfx.CreateSkinImage("song_select/title_bg_pt.jpg", 0)
-local backgroundLS = gfx.CreateSkinImage("song_select/title_bg_ls.png", 0)
+-- local backgroundPT = gfx.CreateSkinImage("song_select/title_bg_pt.jpg", 0)
+-- local backgroundLS = gfx.CreateSkinImage("song_select/title_bg_ls.png", 0)
+local background = gfx.CreateSkinImage("title/background.png", 0)
+local logo = Image.new("title/logo.png", 0)
 
 local cursorYs = {}
 local buttons = nil
@@ -177,28 +179,30 @@ render = function(deltaTime)
 	local yshift = (resy - desh * scale) / 2
 
 
-	if portrait then
-		gfx.Save()
-		gfx.BeginPath()
-		gfx.FillColor(255, 255, 255)
-		gfx.ImageRect(0, 0, resx, resy, backgroundPT, 1, 0)
-		gfx.Restore()
-	else
-		gfx.Save()
+	gfx.Save()
+	if not portrait then
 		gfx.Translate(xshift, yshift);
 		gfx.Scale(scale, scale);
-		gfx.BeginPath()
-		gfx.ImageRect(0, 0, desw, desh, backgroundLS, 1, 0)
-		gfx.Restore()
 	end
+	gfx.BeginPath()
+	gfx.FillColor(255, 255, 255)
+	gfx.ImageRect(0, 0, desw, desh, background, 1, 0)
+	gfx.Restore()
+
+	logo:draw({
+		x = (resx / 2),
+		y = resy / 2.6,
+		h = resy / 6,
+		w = (resy / 6) * (1 / 0.2)
+	})
 
 	gfx.BeginPath()
 
 	cursorGet = 1
-    buttonY = (portrait and ((resy / 2) + (17 * scale))) or ((resy / 2) + (7 * scale) + (desw / 10));
-    hovered = nil
+	buttonY = (portrait and ((resy / 2) + (17 * scale))) or ((resy / 2) + (7 * scale) + (desw / 10));
+	hovered = nil
 	
-    gfx.LoadSkinFont("slant.ttf")
+	gfx.LoadSkinFont("momcake.otf")
 	
 	for i=1, #buttons do
 		cursorYs[i] = buttonY
@@ -216,8 +220,8 @@ render = function(deltaTime)
 	local textShift = portrait and (45 * scale) or (30 * scale)
 	local rectShift = portrait and (64 * scale) or (39 * scale)
 	
-    updateUrl, updateVersion = game.UpdateAvailable()
-    if updateUrl then
+	updateUrl, updateVersion = game.UpdateAvailable()
+	if updateUrl then
 		gfx.BeginPath()
 		gfx.FillColor(0, 0, 0, 225)
 		gfx.Rect(0, 0, resx, resy);

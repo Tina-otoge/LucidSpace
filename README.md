@@ -1,3 +1,23 @@
+# LucidSpace :stars:
+
+LucidSpace is a fork of LucidWave by Tina#1998 and Compote#2406.
+
+It was made to provide a skin that has a polished and good looking interface
+while not being an arcade version look-alike.
+
+We strongly believe that even if no actual assets are used, reproducing the
+assets can be seen as on offense by the right holders and thus it is not very
+ethical to promote, share and use a skin made to imitate the original game.
+
+With LucidSpace, we want to create an original identity and mood while retaining
+the features and layout of the LucidWave skin, which is the best skin to date
+in our opinion.
+
+![LucidSpace song list screenshot](https://cdn.discordapp.com/attachments/263471208245231618/737098641029857290/unknown.png)
+
+--------------------------------------------------------------------------------
+
+## Original README from LucidWave:
 
 LucidWave - A SOUND VOLTEX VIVID WAVE inspired skin for Unnamed SDVX clone
 

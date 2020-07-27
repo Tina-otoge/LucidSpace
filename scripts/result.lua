@@ -27,15 +27,6 @@ resetLayoutInformation = function()
   yShift = (resy - (desh * scale)) / 2;
 end
 
-drawAberratedText = function(text, x, y, offset)
-  gfx.FillColor(245, 65, 125, 255);
-  gfx.Text(text, x, (y + offset));
-  gfx.FillColor(55, 255, 255, 255);
-  gfx.Text(text, (x + offset), y);
-  gfx.FillColor(255, 255, 255, 255)
-  gfx.Text(text, x, y);
-end
-
 drawShiftedText = function(text, color1, color2, size, x, y, offset)
   gfx.FontSize(size);
   gfx.FillColor(color1[1], color1[2], color1[3], color1[4]);
@@ -55,10 +46,10 @@ Results.new = function()
       divider = Image.new('result/divider.png'),
       legend = Image.new('result/legend.png'),
       difficulties = {
-        Image.new('song_select/difficulties/novice.png'),
-        Image.new('song_select/difficulties/advanced.png'),
-        Image.new('song_select/difficulties/exhaust.png'),
-        Image.new('song_select/difficulties/maximum.png')
+        Image.new('difficulties/novice.png'),
+        Image.new('difficulties/advanced.png'),
+        Image.new('difficulties/exhaust.png'),
+        Image.new('difficulties/maximum.png')
       },
     }
   };
@@ -73,18 +64,18 @@ Results.drawJacket = function(this, jacket, x, y, w, h)
   local y1 = y - (h / 2);
 
   gfx.BeginPath();
-  gfx.FillColor(245, 65, 125, 255);
+  gfx.FillColor(245, 65, 125, 0); -- removed
   gfx.Rect((x1 - 4), (y1 - 4), w, h);
   gfx.Fill();
 
   gfx.BeginPath();
-  gfx.FillColor(15, 225, 225, 255);
+  gfx.FillColor(15, 225, 225, 0); -- removed
   gfx.Rect((x1 + 4), (y1 + 4), w, h);
   gfx.Fill();
 
   gfx.BeginPath();
   gfx.FillColor(255, 255, 255, 255);
-  gfx.Rect((x1 - 2), (y1 - 2), (w + 4), (h + 4));
+  gfx.RoundedRect((x1 - 4), (y1 - 4), (w + 8), (h + 8), 10);
   gfx.Fill();
 
   gfx.BeginPath();
@@ -94,9 +85,9 @@ end
 Results.drawTitleArtist = function(this, label, x, y, offset, maxWidth)
   gfx.BeginPath();
   gfx.TextAlign(gfx.TEXT_ALIGN_CENTER);
-  gfx.FillColor(245, 65, 125, 255);
+  gfx.FillColor(245, 65, 125, 0); -- removed
   gfx.DrawLabel(label, (x + offset), (y + offset), maxWidth);
-  gfx.FillColor(25, 25, 25, 255);
+  gfx.FillColor(255, 255, 255, 255);
   gfx.DrawLabel(label, x, y, maxWidth);
 end
 
@@ -137,9 +128,9 @@ Results.drawScore = function(this, score, highScore, positive, x1, y1, x2, y2)
 
   drawShiftedText(
     scoreLarge,
-    { 245, 65, 125, 255 },
-    { 25, 25, 25, 255 },
-    (portrait and 72) or 94,
+    { 245, 65, 125, 0 },
+    { 255, 255, 255, 255 },
+    ((portrait and 72) or 94),
     x1,
     y1,
     1
@@ -147,9 +138,9 @@ Results.drawScore = function(this, score, highScore, positive, x1, y1, x2, y2)
 
   drawShiftedText(
     scoreSmall,
-    { 245, 65, 125, 255 },
-    { 25, 25, 25, 255 },
-    (portrait and 58) or 75,
+    { 245, 65, 125, 0 },
+    { 255, 255, 255, 255 },
+    ((portrait and 58) or 75),
     x2,
     y2,
     1
@@ -376,7 +367,7 @@ Results.render = function(this, showStats);
       positive,
       (portrait and 554) or 1054,
       (portrait and 574) or 242,
-      (portrait and 686) or 1223,
+      ((portrait and 686) or 1223),
       (portrait and 574) or 242
     );
 
@@ -480,7 +471,7 @@ drawHighScores = function()
       drawShiftedText(
         scoreLarge,
         { 245, 65, 125, 255 },
-        { 255, 255, 255, 255},
+        Colors.RGBA.White,
         (portrait and 65) or 96,
         (portrait and 42) or 46,
         (portrait and (y + 31)) or (y + 55),

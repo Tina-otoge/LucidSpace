@@ -24,15 +24,6 @@ resetLayoutInformation = function()
   yShift = (resy - (desh * scale)) / 2;
 end
 
-drawAberratedText = function(text, x, y, offset)
-  gfx.FillColor(245, 65, 125, 255);
-  gfx.Text(text, x, (y + offset));
-  gfx.FillColor(55, 255, 255, 255);
-  gfx.Text(text, (x + offset), y);
-  gfx.FillColor(255, 255, 255, 255)
-  gfx.Text(text, x, y);
-end
-
 local noGrade = Image.new('song_select/grades/none.png');
 local grades = {
   {['min'] = 9900000, ['image'] = Image.new('song_select/grades/S.png')},
@@ -49,7 +40,7 @@ local grades = {
 
 findGradeImage = function(difficulty)
   local gradeImage = noGrade;
-  
+
   if (difficulty.scores[1] ~= nil) then
     local highScore = difficulty.scores[1];
 
@@ -141,6 +132,13 @@ end
 
 SongData = {};
 
+DIFFICULTY_IMAGES = {
+	Image.new('difficulties/novice.png'),
+	Image.new('difficulties/advanced.png'),
+	Image.new('difficulties/exhaust.png'),
+	Image.new('difficulties/maximum.png')
+}
+
 SongData.new = function(jacketCache)
   local this = {
     memo = Memo.new(),
@@ -148,18 +146,14 @@ SongData.new = function(jacketCache)
     selectedDifficulty = 0,
     jacketCache = jacketCache,
     images = {
-      cursor = Image.new('song_select/level_cursor.png'),
+      cursor = Image.new('song_select/cursor.png'),
       songPanelPT = Image.new('song_select/song_panel_pt.png'),
       songPanelLS = Image.new('song_select/song_panel_ls.png'),
-      noDiff = Image.new('song_select/difficulties/none.png'),
-      difficulties = {
-        Image.new('song_select/difficulties/novice.png'),
-        Image.new('song_select/difficulties/advanced.png'),
-        Image.new('song_select/difficulties/exhaust.png'),
-        Image.new('song_select/difficulties/maximum.png')
-      }
+      noDiff = Image.new('difficulties/none.png'),
     }
   };
+  this.images.cursor.w = this.images.cursor.w / 2.45
+  this.images.cursor.h = this.images.cursor.h / 2.45
 
   setmetatable(this, { __index = SongData });
 
@@ -177,9 +171,10 @@ end
 SongData.drawTitleArtist = function(this, label, x, y, maxWidth)
   gfx.BeginPath();
   gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
-  gfx.FillColor(55, 55, 55, 105);
-  gfx.DrawLabel(label, (x + 1), (y + 1), maxWidth);
-  gfx.FillColor(55, 55, 55, 255);
+  -- text shadow
+  -- gfx.FillColor(55, 55, 55, 105);
+  -- gfx.DrawLabel(label, (x + 1), (y + 1), maxWidth);
+  gfx.FillColor(255, 255, 255, 255);
   gfx.DrawLabel(label, x, y, maxWidth);
 end
 
@@ -190,13 +185,17 @@ SongData.drawEffectorIllustrator = function(this, label, x, y, maxWidth)
   gfx.DrawLabel(label, x, y, maxWidth);
 end
 
+local size_delta_bpm = -2
+local offset_hiscore_small_x = -4
+local offset_bpm_y = -1
+
 SongData.drawBPM = function(this, bpm, x, y)
   gfx.BeginPath();
   gfx.LoadSkinFont('avantgarde.ttf');
   gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
-  gfx.FontSize((portrait and 20) or 18);
+  gfx.FontSize(size_delta_bpm + ((portrait and 20) or 18));
   gfx.FillColor(255, 255, 255, 255);
-  gfx.Text(bpm, x, y);
+  gfx.Text(bpm, x, offset_bpm_y + y);
 end
 
 SongData.drawHighScore = function(this, score, x, y)
@@ -205,18 +204,21 @@ SongData.drawHighScore = function(this, score, x, y)
   gfx.LoadSkinFont('avantgarde.ttf');
   gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
   gfx.FillColor(255, 255, 255, 255);
-  gfx.FontSize((portrait and 20) or 18)
-  gfx.Text(string.sub(scoreString, 1, 4), x, y);
+  gfx.FontSize(size_delta_bpm + ((portrait and 20) or 18))
+  gfx.Text(string.sub(scoreString, 1, 4), x, offset_bpm_y + y);
   gfx.FontSize((portrait and 16) or 15)
   gfx.Text(
     string.sub(scoreString, -4),
-    (portrait and (x + 45)) or (x + 41),
-    (portrait and (y + 1)) or (y + 0.5)
+    offset_hiscore_small_x + ((portrait and (x + 45)) or (x + 41)),
+    -- (portrait and (y + 1)) or (y + 0.5)
+    y
   );
 end
 
 SongData.drawDifficulty = function(this, index, diff, jacket)
   local jacket = this.jacketCache.images.jacketLoading;
+  local offset_small_jackets_y = -1
+  local offset_small_jackets_x = 1
 
   if (diff ~= nil) then
     jacket = this.jacketCache:get(diff.jacketPath);
@@ -238,20 +240,22 @@ SongData.drawDifficulty = function(this, index, diff, jacket)
     gfx.Stroke();
     gfx.Fill();
   else
+    local jacket_size = 66
     jacket:draw({
-      x = 89,
-      y = 94 + (index * 66.5),
-      w = 66.5,
-      h = 66.5,
+      x = offset_small_jackets_x + 89,
+      y = offset_small_jackets_y + (94 + (index * jacket_size)),
+      w = jacket_size,
+      h = jacket_size,
     });
 
-    gfx.BeginPath();
-    gfx.FillColor(0, 0, 0, 0);
-    gfx.StrokeColor(0, 0, 0, 255);
-    gfx.StrokeWidth(2);
-    gfx.Rect(56, 61, 67, 265);
-    gfx.Stroke();
-    gfx.Fill();
+    -- black border around small jackets
+    -- gfx.BeginPath();
+    -- gfx.FillColor(0, 0, 0, 0);
+    -- gfx.StrokeColor(0, 0, 0, 255);
+    -- gfx.StrokeWidth(2);
+    -- gfx.Rect(56, 61, 67, 265);
+    -- gfx.Stroke();
+    -- gfx.Fill();
   end
 
   if (diff == nil) then
@@ -261,7 +265,7 @@ SongData.drawDifficulty = function(this, index, diff, jacket)
       s = 0.25
     });
   else
-    this.images.difficulties[diff.difficulty + 1]:draw({
+    DIFFICULTY_IMAGES[diff.difficulty + 1]:draw({
       x = (portrait and (332 + (index * 82))) or (160 + (index * 82)),
       y = (portrait and 261) or 564,
       s = 0.25
@@ -285,7 +289,7 @@ SongData.drawDifficulty = function(this, index, diff, jacket)
     drawAberratedText(
       level,
       x,
-      (portrait and 265.5) or 568.5,
+      4 + ((portrait and 265.5) or 568.5),
       0.8
     );
   end
@@ -312,6 +316,15 @@ SongData.render = function(this, deltaTime)
     diff = song.difficulties[1];
   end
 
+  local jacket = this.jacketCache:get(diff.jacketPath);
+
+  jacket:draw({
+    x = (portrait and 114) or 269,
+    y = (portrait and 138) or 193,
+    w = (portrait and 190) or 260,
+    h = (portrait and 190) or 260,
+  })
+
   if (portrait) then
     this.images.songPanelPT:draw({ 
       x = 356, 
@@ -326,15 +339,11 @@ SongData.render = function(this, deltaTime)
     })
   end
 
-  local jacket = this.jacketCache:get(diff.jacketPath);
+  for i = 1, 4 do
+    local diff = findDifficulty(song.difficulties, i);
+    this:drawDifficulty((i - 1), diff, jacket);
+  end
 
-  jacket:draw({
-    x = (portrait and 114) or 269,
-    y = (portrait and 138) or 193,
-    w = (portrait and 190) or 260,
-    h = (portrait and 190) or 260,
-  });
-  
   -- TODO: remove this stroke, add to song panel image instead
   if (portrait) then
     gfx.BeginPath();
@@ -356,8 +365,8 @@ SongData.render = function(this, deltaTime)
 
   this:drawTitleArtist(
     title,
-    (portrait and 236) or 60,
-    (portrait and 112) or 372,
+    4 + ((portrait and 236) or 60),
+    4 + ((portrait and 112) or 372),
     (portrait and 460) or 410
   );
 
@@ -365,14 +374,14 @@ SongData.render = function(this, deltaTime)
     string.format('artist_%s', song.artist),
     function()
       gfx.LoadSkinFont('arial.ttf');
-      return gfx.CreateLabel(song.artist, 18, 0);
+      return gfx.CreateLabel(song.artist, 16, 0);
     end
   );
 
   this:drawTitleArtist(
     artist,
-    (portrait and 236) or 60,
-    (portrait and 144) or 401,
+    4 + ((portrait and 236) or 60),
+    8 + ((portrait and 144) or 401),
     (portrait and 460) or 410
   );
 
@@ -380,14 +389,14 @@ SongData.render = function(this, deltaTime)
     string.format('eff_%s_%s', song.id, diff.id),
     function()
       gfx.LoadSkinFont('arial.ttf');
-      return gfx.CreateLabel(diff.effector, 14, 0);
+      return gfx.CreateLabel(diff.effector, 10, 0);
     end
   );
 
   this:drawEffectorIllustrator(
     effector,
-    (portrait and 340) or 150,
-    (portrait and 54) or 432,
+    -4 + ((portrait and 340) or 150),
+    3 + ((portrait and 54) or 432),
     (portrait and 350) or 320
   )
 
@@ -396,14 +405,14 @@ SongData.render = function(this, deltaTime)
       string.format('ill_%s_%s', song,id, diff.id),
       function()
         gfx.LoadSkinFont('arial.ttf');
-        return gfx.CreateLabel(diff.illustrator, 14, 0);
+        return gfx.CreateLabel(diff.illustrator, 10, 0);
       end
     );
 
     this:drawEffectorIllustrator(
       illustrator,
-      (portrait and 340) or 150,
-      (portrait and 76) or 451,
+      -4 + ((portrait and 340) or 150),
+      2 + ((portrait and 76) or 451),
       (portrait and 350) or 320
     );
   end
@@ -424,28 +433,27 @@ SongData.render = function(this, deltaTime)
     );
   end
 
+  local offset_medals_x = 3
+  local offset_medals_y = -4
+  local scale_medals = 1.4
+
   local grade = findGradeImage(diff);
 
   grade.image:draw({
-    x = (portrait and 635) or 450.5,
-    y = (portrait and 179) or 238,
-    s = (portrait and 0.5) or 0.65,
+    x = offset_medals_x + ((portrait and 635) or 450.5),
+    y = offset_medals_y + ((portrait and 179) or 238),
+    s = scale_medals * ((portrait and 0.5) or 0.65),
     alpha = (grade.flicker and glowState and 0.9) or 1
   });
 
   local medal = findMedalImage(diff);
 
   medal.image:draw({
-    x = (portrait and 682) or 450.5,
-    y = (portrait and 179) or 302,
-    s = (portrait and 0.5) or 0.65,
+    x = offset_medals_x + ((portrait and 682) or 450.5),
+    y = offset_medals_y + ((portrait and 179) or 302),
+    s = scale_medals * ((portrait and 0.5) or 0.65),
     alpha = (grade.flicker and glowState and 0.9) or 1
   });
-
-  for i = 1, 4 do
-    local diff = findDifficulty(song.difficulties, i);
-    this:drawDifficulty((i - 1), diff, jacket);
-  end
 
   this:drawCursor(diff.difficulty);
 end
@@ -469,12 +477,7 @@ SongTable.new = function(jacketCache)
       cursor = Image.new('song_select/cursor.png'),
       cursorDiamond = Image.new('song_select/cursor_diamond.png'),
       cursorDiamondWire = Image.new('song_select/cursor_diamond_wire.png'),
-      plates = {
-        Image.new('song_select/plates/novice.png'),
-        Image.new('song_select/plates/advanced.png'),
-        Image.new('song_select/plates/exhaust.png'),
-        Image.new('song_select/plates/maximum.png')
-      }
+      plate = Image.new('song_select/plate.png'),
     }
   };
 
@@ -589,6 +592,10 @@ SongTable.drawCursor = function(this, deltaTime)
   local t = currentTime % 1;
   local h = (this.images.cursorDiamondWire.h * 1.5) * easing.outQuad((t * 2), 0, 1, 1);
   local alpha;
+  local offset_cursor_x = -1
+  local offset_cursor_y = -3
+  x = x + offset_cursor_x
+  y = y + offset_cursor_y
 
   this.images.cursorDiamondWire:draw({
     x = x - 2,
@@ -599,15 +606,16 @@ SongTable.drawCursor = function(this, deltaTime)
   });
 
   alpha = easing.outSine(t, 1, -1, 1);
-  h = this.images.cursor.h * easing.outSine(t, 0, 1, 1);
+  -- h = this.images.cursor.h * easing.outSine(t, 0, 1, 1);
 
-  this.images.cursor:draw({
-    x = x - 2,
-    y = y,
-    h = h,
-    alpha = alpha,
-    s = 0.25
-  });
+  -- "Scale up" animation
+  -- this.images.cursor:draw({
+  --   x = x - 2,
+  --   y = y,
+  --   h = h,
+  --   alpha = alpha,
+  --   s = 0.25
+  -- });
 
   this.images.cursor:draw({
     x = x - 2,
@@ -669,7 +677,7 @@ SongTable.drawSong = function(this, pos, index)
     diff = song.difficulties[1];
   end
 
-  this.images.plates[diff.difficulty + 1]:draw({
+  this.images.plate:draw({
     x = x - 25,
     y = y - 25,
     w = 195,
@@ -687,8 +695,10 @@ SongTable.drawSong = function(this, pos, index)
 
   local grade = findGradeImage(diff);
 
+  local offset_medals_x = 1
+
   grade.image:draw({
-    x = x + 42,
+    x = offset_medals_x + x + 42,
     y = y - 70,
     s = 0.5,
     alpha = (grade.flicker and glowState and 0.9) or 1
@@ -697,7 +707,7 @@ SongTable.drawSong = function(this, pos, index)
   local medal = findMedalImage(diff);
 
   medal.image:draw({
-    x = x + 42,
+    x = offset_medals_x + x + 42,
     y = y - 33,
     s = 0.5,
     alpha = (grade.flicker and glowState and 0.9) or 1
@@ -713,12 +723,19 @@ SongTable.drawSong = function(this, pos, index)
 
   this:drawTitle(title, (x - 22), (y + 48), 170);
 
+  DIFFICULTY_IMAGES[diff.difficulty + 1]:draw({
+  	x = x + 43,
+  	y = y + 10 + 1,
+  	w = 60,
+  	h = 60 * 0.7,
+  })
+
   local level = string.format('%02d', diff.level);
 
   this:drawLevel(
     level,
     ((diff.level >= 10) and (x + 41.5)) or (x + 43.5),
-    y + 10
+    y + 10 + 1
   );
 end
 
@@ -765,14 +782,15 @@ drawSearch = function(deltaTime)
 
     gfx.BeginPath();
     gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
-    gfx.FillColor(245, 65, 125, 255);
+    -- gfx.FillColor(245, 65, 125, 255);
+    gfx.FillColor(160, 116, 189, 255);
 
     if (searchIndex ~= ((songwheel.searchInputActive and 0) or 1)) then
       gfx.BeginPath();
       gfx.FillColor(0, 0, 0, 255);
       gfx.RoundedRect(225, 198.3, 383, 20, 10);
       gfx.Fill();
-      gfx.FillColor(245, 65, 125, 255);
+      gfx.FillColor(160, 116, 189, 255);
     end
 
     if (searchSound ~= ((songwheel.searchInputActive and 0) or 1)) then
@@ -796,18 +814,18 @@ drawSearch = function(deltaTime)
       gfx.FillColor(0, 0, 0, 100);
       gfx.Rect(0, 0, resx, resy);
       gfx.Fill();
-      gfx.FillColor(245, 65, 125, 255)
+      gfx.FillColor(160, 116, 189, 255);
     end
 
     gfx.BeginPath();
     gfx.TextAlign(gfx.TEXT_ALIGN_LEFT + gfx.TEXT_ALIGN_MIDDLE);
     gfx.FillColor(255, 255, 255);
-    gfx.StrokeColor(245, 65, 125, 255);
+    gfx.StrokeColor(160, 116, 189, 255);
     gfx.RoundedRect(845, 10, 420, 24, 12);
     gfx.StrokeWidth(2);
     gfx.Stroke();
     gfx.Fill();
-    gfx.FillColor(245, 65, 125, 255);
+    gfx.FillColor(160, 116, 189, 255);
 
     if (searchSound ~= ((songwheel.searchInputActive and 0) or 1)) then
       game.PlaySample('woosh');
@@ -822,6 +840,8 @@ drawForce = function(totalForce, deltaTime)
   local forceText;
   local x;
   local y;
+  local offset_y = -2
+  local scale = 0.9
 
   if (portrait) then
     x = desw - 54;
@@ -834,17 +854,17 @@ drawForce = function(totalForce, deltaTime)
   end
 
   gfx.BeginPath();
-  gfx.LoadSkinFont('russellsquare.ttf');
+  gfx.LoadSkinFont('avantgarde.ttf');
   gfx.TextAlign(gfx.TEXT_ALIGN_RIGHT + gfx.TEXT_ALIGN_BOTTOM);
   gfx.FillColor(255, 255, 255, 255);
 
-  forceText = string.format(string.sub(totalForce, 0, 2) .. ".");
-  gfx.FontSize((portrait and 16) or 18);
-  gfx.Text(forceText, x, y);
+  forceText = string.format(string.sub(totalForce, 0, 2) .. "");
+  gfx.FontSize(scale * ((portrait and 16) or 18));
+  gfx.Text(forceText, x, offset_y + y);
 
   forceText = string.format(string.sub(totalForce, -2));
   gfx.FontSize((portrait and 13) or 14);
-  gfx.Text(forceText, (portrait and (x + 15)) or x + 15, (y - 0.5));
+  gfx.Text(forceText, (portrait and (x + 15)) or x + 15, offset_y + (y - 0.5));
   
   gfx.LoadSkinFont('arial.ttf');
 end
@@ -866,7 +886,7 @@ render = function(deltaTime)
 
   currentTime = currentTime + deltaTime;
 
-  if ((math.floor(currentTime * 1000) % 100) < 50) then
+  if ((math.floor(currentTime * 1000) % 300) < 150) then
     glowState = false;
   else
     glowState = true;
